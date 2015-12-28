@@ -7,11 +7,11 @@ from datetime import datetime, timedelta, date, time as dt_time
 FREQ = 300 # 5 min
 run = True
 
-minTemp = 4
-maxTemp = 6
+minTemp = 19
+maxTemp = 21
 heatStatus = -1 # -1-onStart;0-off;1-on
 heat_relay_pin = 17
-temp_indicator_address_1 = '28-00000477f239'
+temp_indicator_address_1 = '28-00043b7f4fff'
 
 def get_temp():
 	# Open the file that we viewed earlier so that python can see what is in it. Re$
