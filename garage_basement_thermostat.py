@@ -48,32 +48,32 @@ def heat(b):
 #		GPIO.cleanup()
 
 def log(s):
-		print s
+	print s
 
 	f1=open('./garage_basement_thermostat.log', 'a')
 	f1.write(s+'\n')
 	f1.close()
 
 while(run):
-		try:
-			time.sleep(FREQ)
+	try:
+		time.sleep(FREQ)
 
-		t = get_temp()
+		t = get_temp();
 		
 		log(time.strftime("%Y-%m-%d %H:%M ") + 't=' + str(t) + ';heat_status(-1-onStart;0-off;1-on)='+str(heatStatus))
-		
+
 		if(t < minTemp):
 			if(heatStatus != 1):
 				heat(1)
 				heatStatus = 1
 				log('Heat on')
-				
+
 		elif(t > maxTemp):
 			if(heatStatus != 0):
 				heat(0)
 				heatStatus = 0
 				log('Heat off')
 
-		except KeyboardInterrupt:
-				run = False
+	except KeyboardInterrupt:
+		run = False
 
