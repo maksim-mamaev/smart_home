@@ -9,9 +9,8 @@ run = True
 heatStatus = -1 # -1-onStart;0-off;1-on
 
 relayPin = 17
-w1_address = "28-00044c023eff"
-#28-00043b8066ff - balkon
-#28-00044c023eff - room
+w1_room_address = "28-00044c023eff"
+w1_balkon_address = "28-00043b8066ff"
 
 normallyOpen = False
 
@@ -24,7 +23,10 @@ dayMaxTemp = 23.5
 nightMinTemp = 23
 nightMaxTemp = 23.25
 
-def get_temp():
+balkonMinTemp = 22
+balkonMaxTemp = 23
+
+def get_temp(w1_address):
 	# Open the file that we viewed earlier so that python can see what is in it. Re$
 	tfile = open("/sys/devices/w1_bus_master1/" + w1_address + "/w1_slave")
 	# Read all of the text in the file.
@@ -113,7 +115,7 @@ while(run):
         try:
                 time.sleep(FREQ)
 		
-		curT = get_temp()
+		curT = get_temp(w1_address)
 		minT = get_min_temperature()
 		maxT = get_max_temperature()
 

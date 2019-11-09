@@ -1,3 +1,5 @@
 .idea
 smart_home.iml
 *.log
+logs
+backup
