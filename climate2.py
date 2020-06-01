@@ -7,8 +7,11 @@ from datetime import datetime, timedelta, date, time as dt_time
 FREQ = 300 # 5 min
 run = True
 heatStatus = -1 # -1-onStart;0-off;1-on
+heatStatusBalkon = -1
 
-relayPin = 17
+relayPinLight = 22
+relayPinRoom = 17
+relayPinBalkon = 27
 w1_room_address = "28-00044c023eff"
 w1_balkon_address = "28-00043b8066ff"
 
@@ -18,13 +21,13 @@ normallyOpen = False
 #22.5-23 - is ok fot the night
 #21.10: 21.5-22 try increase to day temp
 #22.10 night down 0.5
-dayMinTemp = 23.25
-dayMaxTemp = 23.5
-nightMinTemp = 23
-nightMaxTemp = 23.25
+dayMinTemp = 23 #23.25
+dayMaxTemp = 23.25 #23.5
+nightMinTemp = 22.75 #22.75 -> 22.5
+nightMaxTemp = 23 #23 -> 22.75
 
-balkonMinTemp = 22
-balkonMaxTemp = 23
+balkonMinTemp = 21 #21
+balkonMaxTemp = 21.5 #22
 
 def get_temp(w1_address):
 	# Open the file that we viewed earlier so that python can see what is in it. Re$
@@ -44,18 +47,19 @@ def get_temp(w1_address):
 
 	return temperature
 
-def heat(heat_on):
+def heat(relayPin, heat_on):
+	result = ""
 	pin_status = GPIO.HIGH
 
 	if heat_on:
-		log('Heat on')
+		result = 'Heat on'
 
 		if normallyOpen:
 			pin_status = GPIO.HIGH
 		else:
 			pin_status = GPIO.LOW
 	else:
-		log('Heat off')
+		result = 'Heat off'
 
 		if normallyOpen:
 			pin_status = GPIO.LOW
@@ -74,6 +78,8 @@ def heat(heat_on):
 	finally:
 		pass
 #		GPIO.cleanup()
+	
+	return result 
 
 def get_min_temperature():
 	d = datetime.today()
@@ -107,15 +113,22 @@ def nobody_home():
 def log(s):
         print s
 
-	f1=open('./climate.log', 'a')
+	f1=open('./logs/climate.log', 'a')
 	f1.write(s+'\n')
 	f1.close()
+
+def log2(s):
+        print s
+
+        f1=open('./logs/climate_balkon.log', 'a')
+        f1.write(s+'\n')
+        f1.close()
 
 while(run):
         try:
                 time.sleep(FREQ)
 		
-		curT = get_temp(w1_address)
+		curT = get_temp(w1_room_address)
 		minT = get_min_temperature()
 		maxT = get_max_temperature()
 
@@ -124,13 +137,32 @@ while(run):
 
 		if(curT < minT):
 			if(heatStatus != 1):
-				heat(True)
+				res = heat(relayPinRoom, True)
+				log(res)
 				heatStatus = 1
 
 		elif(curT > maxT):
 			if(heatStatus != 0):
-				heat(False)
+				res = heat(relayPinRoom, False)
+				log(res)
 				heatStatus = 0
+
+		curTBalkon = get_temp(w1_balkon_address)
+                params = (time.strftime("%Y-%m-%d %H:%M"), str(curTBalkon), str(balkonMinTemp), str(balkonMaxTemp), str(heatStatusBalkon))
+                log2('{0} curT={1};minT={2};maxT={3};heat_status(-1-onStart;0-off;1-on)={4}'.format(*params))
+
+                if(curTBalkon < balkonMinTemp):
+                        if(heatStatusBalkon != 1):
+                                res = heat(relayPinBalkon, True)
+                                log2(res)
+				heatStatusBalkon = 1
+
+                elif(curTBalkon > balkonMaxTemp):
+                        if(heatStatusBalkon != 0):
+                                res = heat(relayPinBalkon, False)
+				log2(res)
+                                heatStatusBalkon = 0
+
 
         except KeyboardInterrupt:
                 run = False
