@@ -23,13 +23,13 @@ normallyOpen = False
 #22.5-23 - is ok fot the night
 #21.10: 21.5-22 try increase to day temp
 #22.10 night down 0.5
-dayMinTemp = 23 #23.25
-dayMaxTemp = 23.25 #23.5
-nightMinTemp = 22.75 #22.75 -> 23
-nightMaxTemp = 23 #23 -> 23.25
+dayMinTemp = 23.15 #23.25
+dayMaxTemp = 23.4 #23.5
+nightMinTemp = 22.85 #22.75 -> 23
+nightMaxTemp = 23.1 #23 -> 23.25
 
-balkonMinTemp = 21 #20.5
-balkonMaxTemp = 21.2 #21
+balkonMinTemp = 20.5 #20.5 21
+balkonMaxTemp = 21 #21 21.25
 
 def get_temp(w1_address):
 	# Open the file that we viewed earlier so that python can see what is in it. Re$
@@ -133,7 +133,7 @@ def log2(s):
         f1.close()
 
 roomHeatEnabled = True
-roomFanEnabled = True
+roomFanEnabled = False
 balkonHeatEnabled = True
 
 while(run):
